@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TPMS Generator for Cinema 4D</title>
+<meta name="description" content="A Cinema 4D plugin that builds TPMS structures (Schwarz P, Gyroid, Diamond and more) as a clean quad mesh, with optional cutting to the shape of any closed object.">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<meta property="og:title" content="TPMS Generator for Cinema 4D">
+<meta property="og:description" content="Procedural TPMS structures (Schwarz P, Gyroid, Diamond and more) as a quad mesh in Cinema 4D.">
+<meta property="og:image" content="assets/gallery.png">
+<style>
+:root {
+  --bg: #ffffff; --bg2: #f3f6f8; --text: #1c2228; --muted: #55616d; --accent: #0e8aa6;
+  --accent-text: #ffffff; --border: #d9e0e6; --code: #eef2f5;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171a; --bg2: #1b1f23; --text: #e6ebef; --muted: #9aa7b3; --accent: #3fb8d3;
+    --accent-text: #0c1215; --border: #2c343b; --code: #20262b;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--text); line-height: 1.6;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+a { color: var(--accent); }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+header.nav { border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 5; }
+header.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 650; color: var(--text); text-decoration: none; }
+.brand img { width: 28px; height: 28px; }
+nav a { margin-left: 16px; text-decoration: none; color: var(--muted); font-size: 0.95rem; }
+nav a:hover { color: var(--accent); }
+.hero { text-align: center; padding: 64px 0 40px; }
+.hero img.icon { width: 112px; height: 112px; }
+.hero h1 { font-size: clamp(2rem, 5vw, 3rem); margin: 16px 0 8px; line-height: 1.15; }
+.hero p.lead { max-width: 680px; margin: 0 auto 28px; color: var(--muted); font-size: 1.12rem; }
+.buttons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.btn {
+  display: inline-block; padding: 11px 22px; border-radius: 8px; text-decoration: none;
+  font-weight: 600; border: 1px solid var(--accent);
+}
+.btn.primary { background: var(--accent); color: var(--accent-text); }
+.btn.secondary { color: var(--accent); background: transparent; }
+section { padding: 48px 0; border-top: 1px solid var(--border); }
+section h2 { margin: 0 0 8px; font-size: 1.7rem; }
+section p.sub { margin: 0 0 24px; color: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+.card h3 { margin: 0 0 6px; font-size: 1.05rem; }
+.card p { margin: 0; color: var(--muted); font-size: 0.97rem; }
+figure { margin: 0; }
+figure img { width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--border); display: block; }
+figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 8px; }
+ol.steps { padding-left: 22px; }
+ol.steps li { margin-bottom: 10px; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92rem; }
+code { background: var(--code); padding: 2px 6px; border-radius: 5px; }
+pre { background: var(--code); padding: 14px 16px; border-radius: 10px; overflow-x: auto; margin: 12px 0; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 640px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--bg2); font-size: 0.92rem; }
+td:first-child { white-space: nowrap; font-weight: 600; }
+.note { border-left: 4px solid var(--accent); background: var(--bg2); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+details { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; margin-bottom: 10px; }
+summary { cursor: pointer; font-weight: 600; }
+details p { margin: 8px 0 0; color: var(--muted); }
+footer { border-top: 1px solid var(--border); padding: 28px 0 40px; color: var(--muted); font-size: 0.92rem; text-align: center; }
+@media (max-width: 640px) { nav a:not(.keep) { display: none; } }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/favicon.png" alt="">TPMS Generator</a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="#parameters">Parameters</a>
+      <a href="#faq">FAQ</a>
+      <a class="keep" href="https://github.com/AimarNL/tpms-generator-c4d">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+    <div class="hero">
+      <img class="icon" src="assets/icon-256.png" alt="TPMS Generator icon">
+      <h1>TPMS Generator<br>for Cinema 4D</h1>
+      <p class="lead">Build Schwarz P, Gyroid, Diamond and other <strong>triply periodic minimal surface</strong> structures as a clean quad mesh, directly inside Cinema 4D. Optionally cut them to the shape of any closed object.</p>
+      <div class="buttons">
+        <a class="btn primary" href="https://github.com/AimarNL/tpms-generator-c4d/releases">Download</a>
+        <a class="btn secondary" href="https://github.com/AimarNL/tpms-generator-c4d">View on GitHub</a>
+      </div>
+    </div>
+
+    <figure>
+      <img src="assets/gallery.png" alt="Nine TPMS structure types: Schwarz P, Gyroid, Diamond, Neovius, IWP, Lidinoid, Fischer-Koch S, Split P and Schoen FRD">
+      <figcaption>The nine structure types, ray-marched from the same equations the plugin uses (Sheet mode, one cell each). These are previews, not Cinema 4D screenshots.</figcaption>
+    </figure>
+  </div>
+
+  <section id="what">
+    <div class="wrap">
+      <h2>What is a TPMS?</h2>
+      <p class="sub">A surface defined by an equation <code>f(x, y, z) = C</code> that repeats in all three directions.</p>
+      <p>It splits space into two interlocking channels, so it is naturally hollow. TPMS structures are used for lightweight lattices, heat exchangers, bone scaffolds and generative design. This plugin turns them into a procedural Cinema 4D object with parameters in the Attributes Manager. No Volume Builder or Volume Mesher is needed.</p>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <h2>Features</h2>
+      <p class="sub">Everything is a parameter of a single generator object.</p>
+      <div class="grid">
+        <div class="card"><h3>Nine structure types</h3><p>Schwarz P, Gyroid, Diamond (Schwarz D), Neovius, IWP, Lidinoid, Fischer-Koch S, Split P and Schoen FRD.</p></div>
+        <div class="card"><h3>Sheet or solid</h3><p>Hollow Sheet walls, or Solid A / Solid B with one of the two channels filled.</p></div>
+        <div class="card"><h3>Fully controllable</h3><p>Cell size per axis, wall thickness, iso level <code>C</code> and phase offset.</p></div>
+        <div class="card"><h3>Clean quad mesh</h3><p>Surface Nets output with a Phong tag. Thin walls are kept apart, not fused.</p></div>
+        <div class="card"><h3>Cut to any shape</h3><p>Drop a closed object under the generator. Use Child Shape turns on and the child is hidden automatically.</p></div>
+        <div class="card"><h3>Quality by voxel size</h3><p>One parameter trades speed for detail. Fast with numpy; works without it, with a smaller grid.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <h2>Installation</h2>
+      <p class="sub">Developed for Cinema 4D 2027 (Python plugin).</p>
+      <ol class="steps">
+        <li>Download the latest release zip from the <a href="https://github.com/AimarNL/tpms-generator-c4d/releases">Releases page</a>, or clone the repository.</li>
+        <li>Copy the <code>tpmsgenerator</code> folder into Cinema 4D's plugins folder: <em>Edit &gt; Preferences &gt; Open Preferences Folder</em>, then <code>plugins</code>. Remove any older copy first.</li>
+        <li>Restart Cinema 4D.</li>
+        <li>Press <strong>Shift+C</strong>, type <code>TPMS Generator</code> and create the object.</li>
+      </ol>
+<pre>tpmsgenerator/
+  tpmsgenerator.pyp              plugin code
+  res/
+    c4d_symbols.h
+    icons/tpms_generator.png     plugin icon
+    description/                 parameter UI (.res, .h)
+    strings_us/                  UI texts (.str)</pre>
+      <h3>Quick start</h3>
+      <ol class="steps">
+        <li>Create a <strong>TPMS Generator</strong>. By default it fills a 400 &times; 400 &times; 400 cm box with a Schwarz P sheet.</li>
+        <li>Change <strong>Type</strong>, <strong>Mode</strong>, <strong>Cell Size</strong> and <strong>Thickness</strong>.</li>
+        <li>To cut it to a shape, drag a closed object (for example a Sphere) <strong>under</strong> the generator in the Object Manager.</li>
+        <li>Keep <strong>Voxel Size</strong> large (8&ndash;10) while editing and reduce it (3&ndash;4) for the final result.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="parameters">
+    <div class="wrap">
+      <h2>Parameters</h2>
+      <p class="sub">Shown in the Attributes Manager of the TPMS Generator.</p>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th>Parameter</th><th>Default</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td>Type</td><td>Schwarz P</td><td>The TPMS function: Schwarz P, Gyroid, Diamond, Neovius, IWP, Lidinoid, Fischer-Koch S, Split P or Schoen FRD.</td></tr>
+          <tr><td>Mode</td><td>Sheet</td><td><strong>Sheet:</strong> only the wall, both channels empty. <strong>Solid A (f &lt; C):</strong> one channel filled. <strong>Solid B (f &gt; C):</strong> the other channel filled.</td></tr>
+          <tr><td>Cell Size</td><td>100, 100, 100 cm</td><td>Size of one repeating cell in X, Y and Z. Different values stretch the structure.</td></tr>
+          <tr><td>Thickness</td><td>0.4</td><td>Wall thickness in Sheet mode, in normalised field units (0&ndash;2), not centimetres. Ignored in Solid modes.</td></tr>
+          <tr><td>Level (C)</td><td>0</td><td>The iso-value <code>C</code>. At 0 both channels have equal volume; other values enlarge one channel; extreme values break up or remove the structure.</td></tr>
+          <tr><td>Phase Offset</td><td>0, 0, 0 cm</td><td>Shifts the pattern inside the region.</td></tr>
+          <tr><td>Voxel Size</td><td>4 cm</td><td>Grid spacing and the main quality control. Smaller = finer mesh, more polygons, slower. A sheet wall should be at least about 2 voxels thick.</td></tr>
+          <tr><td>Max Grid Points</td><td>4,000,000</td><td>Safety limit. If <code>Voxel Size</code> would exceed it, the voxel size is raised automatically and the Console prints a message.</td></tr>
+          <tr><td>Use Child Shape</td><td>off</td><td>Off: fills <code>Box Size</code>. On: the first child object defines the shape (closed mesh). Switched on automatically when you place an object under the generator.</td></tr>
+          <tr><td>Box Size</td><td>400, 400, 400 cm</td><td>Size of the box filled when <code>Use Child Shape</code> is off.</td></tr>
+          <tr><td>Margin</td><td>0 cm</td><td>Enlarges the sampled region around the box or shape.</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note"><strong>Choosing a voxel size.</strong> With the default Thickness (0.4) and Cell Size (100), a Voxel Size of 4 is clean for most types. Lidinoid and Fischer-Koch S have thinner walls in Sheet mode; use 3 or lower for those. In general: wall thickness &ge; 2 voxels.</div>
+    </div>
+  </section>
+
+  <section id="performance">
+    <div class="wrap">
+      <h2>numpy and performance</h2>
+      <div class="grid">
+        <div class="card"><h3>With numpy</h3><p>About 5 s for 1.2 million vertices from an 8-million-point grid in tests outside Cinema 4D; about 0.5 s for the default settings (not counting the time Cinema 4D needs to create the polygon object).</p></div>
+        <div class="card"><h3>Without numpy</h3><p>Some Cinema 4D installations do not include it. The plugin then uses a pure-Python path that gives the same mesh but is much slower, so the grid is limited to 300,000 points and the voxel size is raised if needed.</p></div>
+        <div class="card"><h3>Rebuilds</h3><p>The mesh is rebuilt only when a parameter or the child shape changes. Each rebuild prints a <code>[TPMS] built &hellip;</code> line in the Console.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <h2>FAQ and troubleshooting</h2>
+      <details><summary>The viewport is very slow</summary><p>Check the Console for repeated <code>[TPMS] built ...</code> lines while you only orbit the viewport. If they repeat, please open an issue with those lines. Also increase Voxel Size while editing.</p></details>
+      <details><summary>The Console says "numpy not found"</summary><p>The slower pure-Python path is used and the grid is limited to 300,000 points. Make numpy available to Cinema 4D's Python for speed and finer detail (see Maxon's documentation on installing Python packages; steps for your version are not verified here).</p></details>
+      <details><summary>The surface is rough or walls touch each other</summary><p>The wall is thinner than about 2 voxels. Reduce Voxel Size or raise Thickness.</p></details>
+      <details><summary>Nothing is generated</summary><p>Look for <code>[TPMS] error:</code> in the Console. With Use Child Shape on, the child must be a closed mesh and the first child of the generator.</p></details>
+      <details><summary>The plugin does not appear, or its UI is empty</summary><p>Check the Console at startup, check the plugin ID conflict (below), and make sure the whole <code>res</code> folder sits next to <code>tpmsgenerator.pyp</code>.</p></details>
+      <details><summary>What are the plugin IDs?</summary><p>The plugin uses Maxon's shared test IDs <code>1000008</code> (generator) and <code>1000009</code> (helper for child objects). IDs 1000001&ndash;1000010 are shared by all developers and can clash with other plugins; change <code>PLUGIN_ID</code> at the top of <code>tpmsgenerator.pyp</code> if Cinema 4D reports a conflict, and register your own free ID at developers.maxon.net before distributing a modified build. Scenes saved with one ID do not recognise the object after the ID is changed.</p></details>
+    </div>
+  </section>
+
+  <section id="status">
+    <div class="wrap">
+      <h2>Status and limitations</h2>
+      <div class="note">
+        The mesh generation (field, Surface Nets, numpy and pure-Python paths) was verified outside Cinema 4D with test scripts. Plugin registration, the <code>res/</code> UI files, icon loading, reading a real child object, the automatic child setup and the rebuild/caching behaviour have <strong>not</strong> been run inside Cinema 4D by the author. Please report anything you see in the Console.
+      </div>
+      <ul>
+        <li>Features below about 2 voxels cannot be represented exactly.</li>
+        <li>Clipping to a child shape is approximate near the shape's surface and exact at the box faces.</li>
+        <li>Only the first child is used, and it must convert to a closed polygon mesh.</li>
+        <li>Opening a scene that already has a child under a TPMS Generator makes the plugin treat that child once as "newly placed" (Use Child Shape on, child hidden).</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>MIT License &copy; 2026 Aimar &middot; <a href="https://github.com/AimarNL/tpms-generator-c4d">Source on GitHub</a> &middot; <a href="https://github.com/AimarNL/tpms-generator-c4d/issues">Report an issue</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
